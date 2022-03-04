@@ -3,6 +3,7 @@
 namespace Tests\Feature\API\V1;
 
 use Tests\TestCase;
+use Faker\Core\Uuid;
 use App\Models\Project;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -27,6 +28,7 @@ class ProjectTest extends TestCase
         $project = Project::factory()->create();
         $user = $this->getLoggedUser();
         $project->users()->attach($user);
+
         $this->getJson('/api/projects')
             ->assertOk()
             ->assertJsonCount(1, 'data');
@@ -66,7 +68,7 @@ class ProjectTest extends TestCase
     {
         $this->getLoggedUser();
         $project = Project::factory()->create();
-        $this->getJson('/api/projects/' . $project->id)
+        $this->getJson('/api/projects/' . $project->uuid)
             ->assertOk()
             ->assertJsonPath('data.name', $project->name);
     }
@@ -76,7 +78,7 @@ class ProjectTest extends TestCase
         $this->getLoggedUser();
         $project = Project::factory()->create();
         $payload = ['name' => $this->faker->sentence()];
-        $this->putJson('/api/projects/' . $project->id, $payload)
+        $this->putJson('/api/projects/' . $project->uuid, $payload)
             ->assertOK()
             ->assertJsonPath('data.name', $payload['name']);
         $this->assertDatabaseHas('projects', ['name' => $payload['name'], 'id' => 1]);
@@ -86,7 +88,7 @@ class ProjectTest extends TestCase
     {
         $this->getLoggedUser();
         $project = Project::factory()->create();
-        $this->putJson('/api/projects/' . $project->id)
+        $this->putJson('/api/projects/' . $project->uuid)
             ->assertStatus(422)->assertJsonValidationErrors(['name']);
     }
     /** @test */
@@ -94,7 +96,7 @@ class ProjectTest extends TestCase
     {
         $this->getLoggedUser();
         $project = Project::factory()->create();
-        $this->deleteJson('/api/projects/' . $project->id)
+        $this->deleteJson('/api/projects/' . $project->uuid)
             ->assertOK();
         $this->assertDatabaseMissing('projects', ['id' => 1, 'name' => $project->name]);
         $this->assertDatabaseCount('projects', 0);

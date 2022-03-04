@@ -17,6 +17,7 @@ class ProjectFactory extends Factory
     public function definition()
     {
         return [
+            'uuid'     => $this->faker->uuid(),
             'name' => $this->faker->name(),
             'status' => rand(1, 4),
             'duration' => rand(10, 40),

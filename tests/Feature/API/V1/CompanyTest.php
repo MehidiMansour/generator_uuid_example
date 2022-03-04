@@ -66,7 +66,8 @@ class CompanyTest extends TestCase
         $this->withExceptionHandling();
         $user = $this->getLoggedUser();
         $company = Company::factory(['user_id' => $user->id])->create();
-        $this->getJson('/api/companies/' . $company->id)
+
+        $this->getJson('/api/companies/' . $company->uuid)
             ->assertOk()
             ->assertJsonPath('data.name', $company->name)
             ->assertJsonPath('data.user.name', $user->name);
@@ -77,7 +78,7 @@ class CompanyTest extends TestCase
         $user = $this->getLoggedUser();
         $company = Company::factory(['user_id' => $user->id])->create();
         $payload = ['name' => $this->faker->sentence()];
-        $this->putJson('/api/companies/' . $company->id, $payload)
+        $this->putJson('/api/companies/' . $company->uuid, $payload)
             ->assertOK()
             ->assertJsonPath('data.name', $payload['name'])
             ->assertJsonPath('data.user.name', $user->name);
@@ -88,7 +89,7 @@ class CompanyTest extends TestCase
     {
         $user =  $this->getLoggedUser();
         $company = Company::factory(['user_id' => $user->id])->create();
-        $this->deleteJson('/api/companies/' . $company->id)
+        $this->deleteJson('/api/companies/' . $company->uuid)
             ->assertOK();
         $this->assertDatabaseMissing('companies', ['id' => 1, 'name' => $company->name]);
         $this->assertDatabaseCount('companies', 0);
@@ -105,13 +106,13 @@ class CompanyTest extends TestCase
             ->assertJsonPath('data.0.name', $company1->name)
             ->assertJsonPath('data.0.user.name', $user->name);
         /** show */
-        $this->getJson('/api/companies/' . $company2->id)
+        $this->getJson('/api/companies/' . $company2->uuid)
             ->assertForbidden();
         /** update */
-        $this->putJson('/api/companies/' . $company2->id, ['name' => $this->faker->sentence()])
+        $this->putJson('/api/companies/' . $company2->uuid, ['name' => $this->faker->sentence()])
             ->assertForbidden();
         /** delete */
-        $this->deleteJson('/api/companies/' . $company2->id)
+        $this->deleteJson('/api/companies/' . $company2->uuid)
             ->assertForbidden();
     }
     /** @test */

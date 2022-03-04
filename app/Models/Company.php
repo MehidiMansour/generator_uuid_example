@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Http\Concerns\HasUUID;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Company extends Model
 {
     use HasFactory;
+    use HasUUID;
     protected $fillable = ['name'];
     /*
 |------------------------------------------------------------------------------------
